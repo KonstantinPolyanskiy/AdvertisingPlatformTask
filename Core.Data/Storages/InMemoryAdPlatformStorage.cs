@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Core.Application.Contracts;
@@ -12,8 +13,8 @@ public sealed class InMemoryAdPlatformStorage : IAdPlatformReader, IAdPlatformWr
     /// </summary>
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    private ImmutableDictionary<string, ImmutableHashSet<string>> _cumulative =
-        ImmutableDictionary<string, ImmutableHashSet<string>>.Empty.WithComparers(StringComparer.Ordinal);
+    private FrozenDictionary<string, FrozenSet<string>> _cumulative = 
+        FrozenDictionary<string, FrozenSet<string>>.Empty;
         
    /// <inheritdoc />
     public Task<IReadOnlyCollection<string>> FindAsync(string location, CancellationToken ct = default)
@@ -61,7 +62,13 @@ public sealed class InMemoryAdPlatformStorage : IAdPlatformReader, IAdPlatformWr
             // Строим индекс на основе множеств путей, определенных в родительском и дочерних словарях
             var accumulated = BuildCumulativeIndex(parent, children, ct);
 
-            Interlocked.Exchange(ref _cumulative, accumulated);
+            var frozen = accumulated.ToDictionary(
+                kv => kv.Key,
+                kv => kv.Value.ToFrozenSet(StringComparer.Ordinal),
+                StringComparer.Ordinal
+            ).ToFrozenDictionary(StringComparer.Ordinal);
+
+            Interlocked.Exchange(ref _cumulative, frozen);
         }
         finally
         {
