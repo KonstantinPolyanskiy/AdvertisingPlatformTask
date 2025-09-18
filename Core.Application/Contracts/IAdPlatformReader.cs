@@ -1,5 +1,3 @@
-using Core.Application.Models;
-
 namespace Core.Application.Contracts;
 
 /// <summary>
@@ -14,17 +12,4 @@ public interface IAdPlatformReader
     /// <param name="ct">Токен отмены.</param>
     /// <returns>Список площадок, подходящий для локации и всех ее префиксах.</returns>
     Task<IReadOnlyCollection<string>> FindAsync(string location, CancellationToken ct = default);
-}
-
-/// <summary>
-/// Запись данных рекламных площадок в хранилище.
-/// </summary>
-public interface IAdPlatformWriter
-{                 
-    /// <summary>
-    /// Очищает предыдущие записи из хранилища и вставляет в него переданные.
-    /// </summary>
-    /// <param name="records">Записи.</param>
-    /// <param name="ct">Токен отмены.</param>
-    Task ReplaceAsync(IList<AdRecord> records, CancellationToken ct = default);
 }
