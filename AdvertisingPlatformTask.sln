@@ -19,6 +19,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{79D0A4FC-6C05-44F4-8B93-773DF098E285}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
+		example_source.txt = example_source.txt
+		Тестовое задание .NET.pdf = Тестовое задание .NET.pdf
 	EndProjectSection
 EndProject
 Global
