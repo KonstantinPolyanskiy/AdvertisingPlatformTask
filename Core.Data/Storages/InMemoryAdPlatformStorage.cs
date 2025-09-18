@@ -39,7 +39,9 @@ public sealed class InMemoryAdPlatformStorage : IAdPlatformReader, IAdPlatformWr
         }
 
         if (_cumulative.TryGetValue("/", out set))
+        {
             return Task.FromResult<IReadOnlyCollection<string>>(set);
+        }
 
         return Task.FromResult<IReadOnlyCollection<string>>(Array.Empty<string>());
     }
@@ -105,23 +107,24 @@ public sealed class InMemoryAdPlatformStorage : IAdPlatformReader, IAdPlatformWr
 
     private static void EnsureAllAncestorsDeclared(string path, Dictionary<string, HashSet<string>> declared)
     {
-        string parent = string.Empty;
+        var current = path;
 
         while (true)
         {
-            var slash = path.LastIndexOf('/');
+            var slash = current.LastIndexOf('/');
             if (slash <= 0)
             {
                 break;
-            }
-            
-            parent = parent[..slash];
+            }                 
 
-            declared.TryAdd(parent, new HashSet<string>(StringComparer.Ordinal));
+            current = current[..slash];          
+            
+            declared.TryAdd(current, new HashSet<string>(StringComparer.Ordinal));
         }
 
         declared.TryAdd("/", new HashSet<string>(StringComparer.Ordinal));
     }
+
 
     private static Dictionary<string, List<string>> BuildChildrenDictionary(IEnumerable<string> allPaths)
     {
