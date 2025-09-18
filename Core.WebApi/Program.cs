@@ -2,6 +2,7 @@ using Core.Application.Contracts;
 using Core.Application.Services.AdPlatformService.Contract;
 using Core.Application.Services.AdPlatformService.Impl;
 using Core.Data.Storages;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,11 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SupportNonNullableReferenceTypes();
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Advertising Platforms API",
+        Version = "v1"
+    });
 });
 
 builder.Services.AddSingleton<InMemoryAdPlatformStorage>();
@@ -17,7 +23,6 @@ builder.Services.AddSingleton<IAdPlatformWriter>(sp => sp.GetRequiredService<InM
 builder.Services.AddSingleton<IAdPlatformService, AdPlatformService>();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
